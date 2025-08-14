@@ -2,6 +2,8 @@ package org.jdelira.springbootapp;
 
 import org.jdelira.springbootapp.DAO.BancoRepository;
 import org.jdelira.springbootapp.DAO.CuentaRepository;
+import org.jdelira.springbootapp.models.Banco;
+import org.jdelira.springbootapp.models.Cuenta;
 import org.jdelira.springbootapp.services.CuentaService;
 import org.jdelira.springbootapp.services.CuentaServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,8 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class SpringbootTestApplicationTests {
@@ -48,6 +49,15 @@ class SpringbootTestApplicationTests {
 
 		assertEquals("900", saldoOrigen.toPlainString());
 		assertEquals("2100", saldoDestino.toPlainString());
+
+		int total = service.revisarTotalTransferencias(1L);
+		assertEquals(1, total);
+		verify(cuentaRepository, times(3)).findById(1L);
+		verify(cuentaRepository, times(3)).findById(2L);
+		verify(cuentaRepository, times(2)).update(any(Cuenta.class));
+
+		verify(bancoRepository, times(2)).findById(1L);
+		verify(bancoRepository).update(any(Banco.class));
 	}
 
 }

@@ -49,6 +49,6 @@ public class CuentaServiceImpl implements CuentaService{
         Cuenta cuentaDestino = cuentaRepository.findById(numCuentaDestino);
         cuentaDestino.credito(monto);
         cuentaRepository.update(cuentaDestino);
-
     }
 }
+
