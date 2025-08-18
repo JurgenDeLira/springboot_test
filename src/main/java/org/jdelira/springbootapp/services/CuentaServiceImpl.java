@@ -4,9 +4,11 @@ import org.jdelira.springbootapp.DAO.BancoRepository;
 import org.jdelira.springbootapp.DAO.CuentaRepository;
 import org.jdelira.springbootapp.models.Banco;
 import org.jdelira.springbootapp.models.Cuenta;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
+@Service
 public class CuentaServiceImpl implements CuentaService{
 
     private CuentaRepository cuentaRepository;

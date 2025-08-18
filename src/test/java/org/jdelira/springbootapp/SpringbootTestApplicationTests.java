@@ -6,31 +6,34 @@ import org.jdelira.springbootapp.exceptions.DineroInsuficienteException;
 import org.jdelira.springbootapp.models.Banco;
 import org.jdelira.springbootapp.models.Cuenta;
 import org.jdelira.springbootapp.services.CuentaService;
-import org.jdelira.springbootapp.services.CuentaServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.math.BigDecimal;
 
+import static org.jdelira.springbootapp.Datos.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.jdelira.springbootapp.Datos.*;
 
 @SpringBootTest
 class SpringbootTestApplicationTests {
 
+	@MockBean
 	CuentaRepository cuentaRepository;
+	@MockBean
 	BancoRepository bancoRepository;
-
+	@Autowired
 	CuentaService service;
 
 	@BeforeEach
 	void setUp() {
 
-		cuentaRepository = mock(CuentaRepository.class);
-		bancoRepository = mock(BancoRepository.class);
-		service = new CuentaServiceImpl(cuentaRepository, bancoRepository);
+		//cuentaRepository = mock(CuentaRepository.class);
+		//bancoRepository = mock(BancoRepository.class);
+		//service = new CuentaServiceImpl(cuentaRepository, bancoRepository);
 
 		//Datos.CUENTA_001.setSaldo(new BigDecimal("1000"));
 		//Datos.CUENTA_002.setSaldo(new BigDecimal("2000"));
