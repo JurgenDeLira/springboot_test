@@ -1,8 +1,15 @@
 package org.jdelira.springbootapp.models;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "bancos")
 public class Banco {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
+    @Column(name = "total_transferencias")
     private int totalTransferencias;
 
     public Banco() {
