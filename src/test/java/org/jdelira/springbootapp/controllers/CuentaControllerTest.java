@@ -1,6 +1,7 @@
 package org.jdelira.springbootapp.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jdelira.springbootapp.models.Cuenta;
 import org.jdelira.springbootapp.models.TransaccionDto;
 import org.jdelira.springbootapp.services.CuentaService;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,13 +14,18 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.jdelira.springbootapp.Datos.crearCuenta001;
+import static org.jdelira.springbootapp.Datos.crearCuenta002;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -88,5 +94,27 @@ class CuentaControllerTest {
                 .andExpect(jsonPath("$.transacción.cuentaOrigenId").value(dto.getCuentaOrigenId()))
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
 
+    }
+
+    @Test
+    void testListar() throws Exception {
+
+        //Given
+        List<Cuenta> cuentas = Arrays.asList(crearCuenta001().orElseThrow(),
+                crearCuenta002().orElseThrow()
+        );
+        when(cuentaService.findAll()).thenReturn(cuentas);
+
+        //When
+        mvc.perform(get("/api/cuentas").contentType(APPLICATION_JSON))
+                //Then
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].persona").value("Jorge"))
+                .andExpect(jsonPath("$[1].persona").value("John"))
+                .andExpect(jsonPath("$[0].saldo").value("1000"))
+                .andExpect(jsonPath("$[1].saldo").value("2000"))
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(content().json(objectMapper.writeValueAsString(cuentas)));
     }
 }
