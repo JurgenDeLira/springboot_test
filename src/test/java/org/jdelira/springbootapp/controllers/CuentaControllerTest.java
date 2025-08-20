@@ -20,8 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.jdelira.springbootapp.Datos.crearCuenta001;
 import static org.jdelira.springbootapp.Datos.crearCuenta002;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -116,5 +118,29 @@ class CuentaControllerTest {
                 .andExpect(jsonPath("$[1].saldo").value("2000"))
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(content().json(objectMapper.writeValueAsString(cuentas)));
+        verify(cuentaService).findAll();
+    }
+
+    @Test
+    void testGuardar() throws Exception {
+        //Given
+        Cuenta cuenta = new Cuenta(null, "Pepe", new BigDecimal("3000"));
+        when(cuentaService.save(any())).then(invocation -> {
+            Cuenta c = invocation.getArgument(0);
+            c.setId(3L);
+            return c;
+        });
+
+        //When
+        mvc.perform(post("/api/cuentas").contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(cuenta)))
+
+                //Then
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is(3)))
+                .andExpect(jsonPath("$.persona", is("Pepe")))
+                .andExpect(jsonPath("$.saldo", is(3000)));
+        verify(cuentaService).save(any());
     }
 }

@@ -36,8 +36,8 @@ public class CuentaController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public Cuenta guardar(@io.swagger.v3.oas.annotations.parameters.RequestBody Cuenta cuenta){
-        return null;
+    public Cuenta guardar(@RequestBody Cuenta cuenta){
+        return cuentaService.save(cuenta);
     }
 
     @PostMapping("/transferir")
