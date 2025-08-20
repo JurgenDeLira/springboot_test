@@ -1,7 +1,7 @@
 package org.jdelira.springbootapp.controllers;
 
 import org.jdelira.springbootapp.models.Cuenta;
-import org.jdelira.springbootapp.models.TransacciónDto;
+import org.jdelira.springbootapp.models.TransaccionDto;
 import org.jdelira.springbootapp.services.CuentaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,7 @@ public class CuentaController {
     }
 
     @PostMapping("/transferir")
-    public ResponseEntity<?> transferir(@RequestBody TransacciónDto dto) {
+    public ResponseEntity<?> transferir(@RequestBody TransaccionDto dto) {
         cuentaService.transferir(dto.getCuentaOrigenId(), dto.getCuentaDestinoId(),
                 dto.getMonto(), dto.getBancoId());
 

@@ -2,7 +2,7 @@ package org.jdelira.springbootapp.models;
 
 import java.math.BigDecimal;
 
-public class TransacciónDto {
+public class TransaccionDto {
     private Long cuentaOrigenId;
     private Long cuentaDestinoId;
     private BigDecimal monto;
