@@ -1,6 +1,7 @@
 package org.jdelira.springbootapp.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jdelira.springbootapp.models.TransaccionDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -51,12 +53,25 @@ class CuentaControllerWebTestClientTests {
         response.put("transacción", dto);
 
         //When
-        client.post().uri("http://localhost:8080/api/cuentas/transferir")
+        client.post().uri("/api/cuentas/transferir")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(dto)
                 .exchange()
+
+                //Then
                 .expectStatus().isOk()
                 .expectBody()
+                .consumeWith(respuesta -> {
+                    try {
+                        JsonNode json = objectMapper.readTree(respuesta.getResponseBody());
+                        assertEquals("Transferencia realizada con éxito!", json.path("mensaje").asText());
+                        assertEquals(1L, json.path("transacción").path("cuentaOrigenId").asLong());
+                        assertEquals(LocalDate.now().toString(), json.path("date").asText());
+                        assertEquals("100", json.path("transacción").path("monto").asText());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                })
                 .jsonPath("$.mensaje").isNotEmpty()
                 .jsonPath("$.mensaje").value(is("Transferencia realizada con éxito!"))
                 .jsonPath("$.mensaje").value( valor -> assertEquals("Transferencia realizada con éxito!", valor))
