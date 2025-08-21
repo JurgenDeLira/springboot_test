@@ -3,6 +3,7 @@ package org.jdelira.springbootapp.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jdelira.springbootapp.models.Cuenta;
 import org.jdelira.springbootapp.models.TransaccionDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,6 +74,50 @@ class CuentaControllerTestRestTemplateTests {
 
         assertEquals(objectMapper.writeValueAsString(response2), json);
 
+    }
+
+    @Test
+    @Order(2)
+    void testDetalle() {
+        ResponseEntity<Cuenta> respuesta = client.getForEntity(crearUri("/api/cuentas/1"), Cuenta.class);
+        Cuenta cuenta = respuesta.getBody();
+        assertEquals(HttpStatus.OK, respuesta.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, respuesta.getHeaders().getContentType());
+
+        assert cuenta != null;
+        assertEquals(1L, cuenta.getId());
+        assertEquals("Jorge", cuenta.getPersona());
+        assertEquals("900.00", cuenta.getSaldo().toPlainString());
+        assertEquals(new Cuenta(1L, "Jorge", new BigDecimal("900.00")), cuenta);
+    }
+
+    @Test
+    @Order(3)
+    void testListar() throws JsonProcessingException {
+        ResponseEntity<Cuenta[]> respuesta = client.getForEntity(crearUri("/api/cuentas"), Cuenta[].class);
+        List<Cuenta> cuentas = Arrays.asList(respuesta.getBody());
+
+        assertEquals(HttpStatus.OK, respuesta.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, respuesta.getHeaders().getContentType());
+
+        assertEquals(2, cuentas.size());
+
+        assertEquals(1L, cuentas.get(0).getId());
+        assertEquals("Jorge", cuentas.get(0).getPersona());
+        assertEquals("900.00", cuentas.get(0).getSaldo().toPlainString());
+
+        assertEquals(2L, cuentas.get(1).getId());
+        assertEquals("John", cuentas.get(1).getPersona());
+        assertEquals("2100.00", cuentas.get(1).getSaldo().toPlainString());
+
+        JsonNode json = objectMapper.readTree(objectMapper.writeValueAsString(cuentas));
+        assertEquals(1L, json.get(0).path("id").asLong());
+        assertEquals("Jorge", json.get(0).path("persona").asText());
+        assertEquals("900.0", json.get(0).path("saldo").asText());
+
+        assertEquals(2L, json.get(1).path("id").asLong());
+        assertEquals("John", json.get(1).path("persona").asText());
+        assertEquals("2100.0", json.get(1).path("saldo").asText());
     }
 
     private String crearUri(String uri) {
