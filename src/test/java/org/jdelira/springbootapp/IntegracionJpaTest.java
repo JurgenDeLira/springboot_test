@@ -2,6 +2,7 @@ package org.jdelira.springbootapp;
 
 import org.jdelira.springbootapp.DAO.CuentaRepository;
 import org.jdelira.springbootapp.models.Cuenta;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("integracion_jpa")
 @DataJpaTest
 public class IntegracionJpaTest {
     @Autowired
